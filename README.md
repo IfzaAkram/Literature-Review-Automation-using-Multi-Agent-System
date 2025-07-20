@@ -13,11 +13,15 @@ Built with [Autogen](https://github.com/microsoft/autogen), [Groq](https://groq.
 ## Step 1: Install and configure all the necessary packages.
 
 !pip install PyPDF2 pdfplumber pytesseract pdf2image Rouge textstat scikit-learn arxiv
+
 !pip install autogen autogen_ext autogen_agentchat
+
 !pip install --upgrade opentelemetry-sdk
 
 import requests
+
 from getpass import getpass
+
 import PyPDF2
 import asyncio
 import os
