@@ -8,6 +8,7 @@ This repository showcases a **Multi-Agent System** for automating the process of
 - Incorporate user feedback for final refinement
 
 Built with [Autogen](https://github.com/microsoft/autogen), [Groq](https://groq.com/), and multi-agent coordination.
+
 <div style="text-align: center;">
     <img src="Overview_Multi-Agent.jpg" alt="warmup.png" width="700"/>
 </div>
@@ -291,6 +292,11 @@ Read_Summarize_tool = FunctionTool(
 )
 ```
 ## Step 6: Build the required agents.
+To visually represent how each agent works and interacts in  multi-agent literature review system, you can use a diagram:
+<div style="text-align: center;">
+    <img src="Flow_Multi-Agent.jpg" alt="warmup.png" width="700"/>
+</div>
+
 
 ### 6.1 Extract and Download Agent: 
 This agent is responsible to extract and download papers with paper title.
