@@ -87,7 +87,8 @@ await assistant_run()
 ```
 ## Step 4: Create methods
 
-#### 4.1 Create method extract_and_download_pdfs() which will extract pdf links and download the papers from these link.
+#### 4.1 
+Create method extract_and_download_pdfs() which will extract pdf links and download the papers from these link.
 ```sh
 
 def extract_and_download_pdfs(save_dir: str = "research_papers"):
@@ -152,7 +153,8 @@ def extract_and_download_pdfs(save_dir: str = "research_papers"):
 #print(f"Downloaded files: {downloaded_files}")
 ```
 
-### 4.2 Use summarize_all_pdfs() which will read the paper in chunks and summarize all papers
+### 4.2 Use summarize_all_pdfs() 
+summarize_all_pdfs function will read the paper in chunks and summarize all papers
 ```ssh
 
 client = openai.OpenAI(
@@ -290,7 +292,8 @@ Read_Summarize_tool = FunctionTool(
 ```
 ## Step 6: Build the required agents.
 
-### 6.1 Extract and Download Agent: This agent is responsible to extract and download papers with paper title.
+### 6.1 Extract and Download Agent: 
+This agent is responsible to extract and download papers with paper title.
 
 # Download Agent
 ```sh
@@ -309,7 +312,8 @@ Extract_and_Download_Agent = AssistantAgent(
 
 ```
 
-### 6.2 Read and Summarize paper Agent: This agent will read all papers one by one and read paper in chunks and summarize it to use it for literature review.
+### 6.2 Read and Summarize paper Agent: 
+This agent will read all papers one by one and read paper in chunks and summarize it to use it for literature review.
 ```sh
 Read_and_Summarize_Papers_Agent = AssistantAgent(
     name="Read_and_Summarize_Papers_Agent",
@@ -323,7 +327,8 @@ Read_and_Summarize_Papers_Agent = AssistantAgent(
 )
 ```
 
-### 6.3 Review Agent: This agent will produce literature review from the summaries of the papers.
+### 6.3 Review Agent: 
+This agent will produce literature review from the summaries of the papers.
 ```sh
 Review_Agent = AssistantAgent(
     name="Review_Agent",
@@ -333,7 +338,8 @@ Review_Agent = AssistantAgent(
     ),
 )
 ```
-### 6.4 User Proxy Agent: This agent will take user suggestions.
+### 6.4 User Proxy Agent: 
+This agent will take user suggestions.
 ```sh
 User_Proxy_Agent = UserProxyAgent(
     name="User_Proxy_Agent",
@@ -342,7 +348,8 @@ User_Proxy_Agent = UserProxyAgent(
 )
 ```
 
-### 6.5 Final Review Agent: This agent will refine the review based on user input and save it in file.
+### 6.5 Final Review Agent: 
+This agent will refine the review based on user input and save it in file.
 ```sh
 Final_Review_Agent = AssistantAgent(
     name="Final_Review_Agent",
@@ -356,7 +363,8 @@ Final_Review_Agent = AssistantAgent(
 #You are responsible for creating a literature review based on the final summaries. Integrate key findings from all papers into a cohesive, well-organized 500-word review. and make sure that words must be 500-word."
 ```
 
-## Step 7: Implement tex termination In this step, implement MaxMessage termination with 6 max_messages.
+## Step 7: 
+Implement max termination In this step, implement MaxMessage termination with 6 max_messages.
 
 ```sh
 termination = MaxMessageTermination(max_messages=6)
