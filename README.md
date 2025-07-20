@@ -368,8 +368,7 @@ team = RoundRobinGroupChat(
     [Extract_and_Download_Agent, Read_and_Summarize_Papers_Agent, Review_Agent, User_Proxy_Agent, Final_Review_Agent],
     termination_condition=termination,
 )
-task = "Write a Literature Review on Prompt Engineering research papers and it must be 500-words"
-#task = "Write a Literature Review on Multi-Agent LLM systems research papers and it must be 500-words"
+task = "Write a Literature Review on Multi-Agent LLM systems research papers and it must be 500-words"
 
 await Console(team.run_stream(task=task))
 ```
