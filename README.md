@@ -11,6 +11,7 @@ Built with [Autogen](https://github.com/microsoft/autogen), [Groq](https://groq.
 
 
 ## Step 1: Install and configure all the necessary packages.
+ ```sh
 
 !pip install PyPDF2 pdfplumber pytesseract pdf2image Rouge textstat scikit-learn arxiv
 
@@ -37,9 +38,10 @@ from autogen_core.tools import FunctionTool
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_agentchat.messages import TextMessage
 from autogen_core import CancellationToken
+```
 
-
-**Step 2:** Setup Groq API
+## Step 2: Setup Groq API
+```sh
 import os
 from getpass import getpass
 
@@ -47,12 +49,8 @@ tokenGROQ = getpass('Enter GROQ_API_KEY here: ')
 os.environ["GROQ_API_KEY"] = tokenGROQ
 print(os.environ.get("GROQ_API_KEY"))
 
-
-
-
-
-
-# Create the model client
+## Step 3: Connect to LLM and test the LLM
+```sh
 model_client = OpenAIChatCompletionClient(
     model="gemma2-9b-it",
     base_url="https://api.groq.com/openai/v1",
@@ -65,7 +63,7 @@ model_client = OpenAIChatCompletionClient(
     },
 )
 
-#Test the LLM
+####Test the LLM
 async def Agent_tool(query: str) -> str:
     return "A multi-agent system is a framework where multiple agents interact, collaborate, or compete to solve complex tasks or achieve individual goals."
 
@@ -84,7 +82,7 @@ async def assistant_run() -> None:
     print(response.chat_message)
 
 await assistant_run()
-
+```
 **Step 4: Create methods**
 
 **4.1** Create method extract_and_download_pdfs() which will extract pdf links and download the papers from these link.
