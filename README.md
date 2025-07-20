@@ -9,7 +9,7 @@ This repository showcases a **Multi-Agent System** for automating the process of
 
 Built with [Autogen](https://github.com/microsoft/autogen), [Groq](https://groq.com/), and multi-agent coordination.
 <div style="text-align: center;">
-    <img src="graphs/Multi_Agents.png" alt="warmup.png" width="300"/>
+    <img src="graphs/Overview_Multi-Agent.jpg" alt="warmup.png" width="300"/>
 </div>
 
 ## Step 1: Install and configure all the necessary packages.
