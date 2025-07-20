@@ -88,7 +88,7 @@ await assistant_run()
 ```
 ## Step 4: Create methods
 
-#### 4.1 
+#### 4.1 Use extract_and_download_pdfs()
 Create method extract_and_download_pdfs() which will extract pdf links and download the papers from these link.
 ```sh
 
