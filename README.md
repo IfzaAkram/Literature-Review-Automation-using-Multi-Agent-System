@@ -1,4 +1,4 @@
-# Literature Review using Multi-Agent System# 📚 Multi-Agent System for Automated Literature Review
+# Literature Review using Multi-Agent System
 
 This repository showcases a **Multi-Agent System** for automating the process of writing a literature review from academic papers. The system leverages multiple specialized agents to:
 
@@ -8,7 +8,9 @@ This repository showcases a **Multi-Agent System** for automating the process of
 - Incorporate user feedback for final refinement
 
 Built with [Autogen](https://github.com/microsoft/autogen), [Groq](https://groq.com/), and multi-agent coordination.
-
+<div style="text-align: center;">
+    <img src="graphs/Multi_Agents.png" alt="warmup.png" width="300"/>
+</div>
 
 ## Step 1: Install and configure all the necessary packages.
  ```sh
