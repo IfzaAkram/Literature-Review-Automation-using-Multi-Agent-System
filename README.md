@@ -14,18 +14,18 @@ Built with [Autogen](https://github.com/microsoft/autogen), [Groq](https://groq.
  ```sh
 
 !pip install PyPDF2 pdfplumber pytesseract pdf2image Rouge textstat scikit-learn arxiv
-
 !pip install autogen autogen_ext autogen_agentchat
-
 !pip install --upgrade opentelemetry-sdk
-
 import requests
-
 from getpass import getpass
-
-import PyPDF2
 import asyncio
 import os
+import time
+import pdfplumber
+import pytesseract
+import openai
+from pdf2image import convert_from_path
+from bs4 import BeautifulSoup
 from autogen import UserProxyAgent, AssistantAgent, GroupChat, GroupChatManager
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -42,15 +42,15 @@ from autogen_core import CancellationToken
 
 ## Step 2: Setup Groq API
 ```sh
-import os
-from getpass import getpass
-
 tokenGROQ = getpass('Enter GROQ_API_KEY here: ')
 os.environ["GROQ_API_KEY"] = tokenGROQ
 print(os.environ.get("GROQ_API_KEY"))
+```
 
 ## Step 3: Connect to LLM and test the LLM
+
 ```sh
+#Connect the LLM
 model_client = OpenAIChatCompletionClient(
     model="gemma2-9b-it",
     base_url="https://api.groq.com/openai/v1",
@@ -63,7 +63,7 @@ model_client = OpenAIChatCompletionClient(
     },
 )
 
-####Test the LLM
+#Test the LLM
 async def Agent_tool(query: str) -> str:
     return "A multi-agent system is a framework where multiple agents interact, collaborate, or compete to solve complex tasks or achieve individual goals."
 
@@ -83,28 +83,15 @@ async def assistant_run() -> None:
 
 await assistant_run()
 ```
-**Step 4: Create methods**
+## Step 4: Create methods
 
-**4.1** Create method extract_and_download_pdfs() which will extract pdf links and download the papers from these link.
-import os
-import requests
-from bs4 import BeautifulSoup
+#### 4.1 Create method extract_and_download_pdfs() which will extract pdf links and download the papers from these link.
+```sh
 
 def extract_and_download_pdfs(save_dir: str = "research_papers"):
     #Extracts PDF URLs for each paper from Arxiv pages using paper links and downloads them.
-    #### Prompt Engin papers link ####
-    PAPER_URLS = [
-        "https://arxiv.org/abs/2303.05352",
-        "https://arxiv.org/abs/2310.06174v1",
-        "https://arxiv.org/abs/2307.09036",
-        "https://arxiv.org/abs/2410.22997",
-        "https://arxiv.org/abs/2402.07927",
-        "https://arxiv.org/abs/2502.11560"
-    ]
 
-
-
-    """ #### Multi-Agent LLM Systems papers link ####
+    # Multi-Agent LLM Systems papers link 
     PAPER_URLS = [
         "https://arxiv.org/abs/2306.03314",
         "https://arxiv.org/abs/2406.13693",
@@ -161,15 +148,11 @@ def extract_and_download_pdfs(save_dir: str = "research_papers"):
 # testing the methods
 #downloaded_files = extract_and_download_pdfs(save_dir="research_papers")
 #print(f"Downloaded files: {downloaded_files}")
+```
 
-**4.2** Use summarize_all_pdfs() which will read the paper in chunks and summarize all papers
+### 4.2 Use summarize_all_pdfs() which will read the paper in chunks and summarize all papers
+```ssh
 
-import os
-import time
-import pdfplumber
-import pytesseract
-from pdf2image import convert_from_path
-import openai
 client = openai.OpenAI(
     base_url="https://api.groq.com/openai/v1",
     api_key=os.environ.get("GROQ_API_KEY")
@@ -286,10 +269,10 @@ def summarize_all_papers(pdf_files: list) -> list:
 #print(f"All Summaries:")
 #for summary in all_summaries:
 #    print(summary)
+```
 
-
-**Step 5:**
-Setup the required tools.
+## Step 5: Setup the required tools.
+```sh
 #Tool to download the PDF file from the given URL
 
 Extract_download_pdf_tool = FunctionTool(
@@ -302,16 +285,13 @@ Read_Summarize_tool = FunctionTool(
     summarize_all_papers,
     description="You are doing chunked summaries of all papers to understand the paper. Your main task is provide summary of each paper."
 )
-**Step 6**
+```
+## Step 6: Build the required agents.
 
-Build the required agents.
-**6.1 Extract and Download Agent:** This agent is responsible to extract and download papers with paper title.
-from autogen_agentchat.agents import AssistantAgent, UserProxyAgent
-from autogen_agentchat.conditions import MaxMessageTermination, TextMentionTermination
-from autogen_agentchat.teams import SelectorGroupChat
-from autogen_agentchat.ui import Console
+### 6.1 Extract and Download Agent: This agent is responsible to extract and download papers with paper title.
 
 # Download Agent
+```sh
 Extract_and_Download_Agent = AssistantAgent(
     name="Extract_and_Download_Agent",
     model_client=model_client,
@@ -325,8 +305,10 @@ Extract_and_Download_Agent = AssistantAgent(
     ),
 )
 
+```
 
-
+### 6.2 Read and Summarize paper Agent: This agent will read all papers one by one and read paper in chunks and summarize it to use it for literature review.
+```sh
 Read_and_Summarize_Papers_Agent = AssistantAgent(
     name="Read_and_Summarize_Papers_Agent",
     tools=[Read_Summarize_tool],
@@ -337,8 +319,10 @@ Read_and_Summarize_Papers_Agent = AssistantAgent(
     system_message=("""You are a helpful AI assistant. Solve tasks using your tools.Your task is to process each paper in the designated directory,and provide a clear, concise summary for each paper."""
     ),
 )
+```
 
-**6.3 Review Agent:** This agent will produce literature review from the summaries of the papers.
+### 6.3 Review Agent: This agent will produce literature review from the summaries of the papers.
+```sh
 Review_Agent = AssistantAgent(
     name="Review_Agent",
     model_client=model_client,
@@ -346,16 +330,18 @@ Review_Agent = AssistantAgent(
     system_message=(""" You are an expert in writing literature reviews.Take the summaries of the papers and write a comprehensive 500-word literature review.Structure the review paragraphs, with each paragraph explaining a specific aspect of the topic and summarizing key insights from all the provided papers."""
     ),
 )
-**6.4 User Proxy Agent:** This agent will take user suggestions.
+```
+### 6.4 User Proxy Agent: This agent will take user suggestions.
+```sh
 User_Proxy_Agent = UserProxyAgent(
     name="User_Proxy_Agent",
     input_func=input,
     description="This agent allows the user to interact and provide feedback during the literature review process."
 )
+```
 
-
-**6.5 Final Review Agent:** This agent will refine the review based on user input and save it in file.
-
+### 6.5 Final Review Agent: This agent will refine the review based on user input and save it in file.
+```sh
 Final_Review_Agent = AssistantAgent(
     name="Final_Review_Agent",
     model_client=model_client,
@@ -366,27 +352,22 @@ Final_Review_Agent = AssistantAgent(
 ####Some time correct prompt will not give the correct literature review you can use the prompt defined as below
 #You are an expert in writing literature reviews. write a comprehensive 500-word literature review. Structure the review paragraphs, with each paragraph explaining a specific aspect of the topic and summarizing key insights from all the provided papers.
 #You are responsible for creating a literature review based on the final summaries. Integrate key findings from all papers into a cohesive, well-organized 500-word review. and make sure that words must be 500-word."
+```
 
+## Step 7: Implement tex termination In this step, implement MaxMessage termination with 6 max_messages.
 
-Step 7: Implement tex termination In this step, implement MaxMessage termination with 6 max_messages.
-from autogen_agentchat.conditions import MaxMessageTermination
+```sh
 termination = MaxMessageTermination(max_messages=6)
-Step 8: Group Chat
-
+```
+## Step 8: Group Chat 
 For communication between agents implement RoundRobinGroupChat.from autogen_agentchat.teams import RoundRobinGroupChat
-from autogen_agentchat.ui import Console
-
-
-
+```sh
 team = RoundRobinGroupChat(
     [Extract_and_Download_Agent, Read_and_Summarize_Papers_Agent, Review_Agent, User_Proxy_Agent, Final_Review_Agent],
     termination_condition=termination,
 )
-
-from autogen_agentchat.ui import Console
-
 task = "Write a Literature Review on Prompt Engineering research papers and it must be 500-words"
 #task = "Write a Literature Review on Multi-Agent LLM systems research papers and it must be 500-words"
 
 await Console(team.run_stream(task=task))
-
+```
